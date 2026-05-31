@@ -25,11 +25,12 @@ def run_slippage_comparison():
     df_1w = pd.read_csv(csv_1w_path)
     df_1m = pd.read_csv(csv_1m_path)
     
-    # 2. Definir las 3 Medidas de Deslizamiento (Slippage)
+    # 2. Definir las 4 Medidas de Deslizamiento (Slippage)
     slippage_configurations = [
         ("Medida 1: Rebalanceo Naive (Slippage 0.10%)", 0.0010),
         ("Medida 2: Rebalanceo Optimizado (Slippage 0.03%)", 0.0003),
-        ("Medida 3: Aporte Asimétrico (Slippage 0.00%)", 0.0000)
+        ("Medida 3: Aporte Asimétrico (Slippage 0.00%)", 0.0000),
+        ("Medida 4: Bot Ineficiente (Slippage 1.00%)", 0.0100)
     ]
     
     selected_strategies = ["static", "dynamic_1sig", "opt_constant", "opt_garch", "opt_heston"]
