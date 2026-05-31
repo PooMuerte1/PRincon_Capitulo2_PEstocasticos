@@ -1273,3 +1273,75 @@ En producción, la combinación de **GARCH(1,1) + Cortafuegos** es la configurac
 ---
 
 ## _(Espacio reservado para futuras consultas)_
+
+---
+
+## Consulta 20: Campañas de Backtesting a Largo Plazo: 1 Semana (5m) y 1 Mes (15m) bajo Condiciones Empíricas
+
+### Pregunta
+> *Necesito un periodo de una semana; hazme otro CSV y compárame con una semana; después lo mismo pero un mes.*
+
+### Explicación Cuantitativa
+
+Para evaluar de forma exhaustiva el rendimiento intertemporal de las 15 estrategias en paralelo, hemos completado dos campañas continuas masivas de backtesting utilizando datos históricos de GeckoTerminal de alta resolución:
+1. **Campaña de 1 Semana** (`avax_usdc_1week.csv`): 2,016 velas de 5 minutos, con una volatilidad anualizada empírica de **40.40%**, precio inicial de $9.31 y final de $8.91 (-4.30%), y un volumen total transaccionado en el pool de **$89,684,577.03 USD**.
+2. **Campaña de 1 Mes** (`avax_usdc_1month.csv`): 2,880 velas de 15 minutos, con una volatilidad anualizada empírica de **48.02%**, precio inicial de $9.19 y final de $8.91 (-3.05%), y un volumen total transaccionado en el pool de **$533,423,487.53 USD**.
+
+Los resultados ASCII reportados en consola se desglosan de forma comparativa a continuación, extrayendo conclusiones críticas para la toma de decisiones en producción.
+
+---
+
+### 1. Desglose Numérico de la Campaña de 1 Semana (5-min aggregate)
+
+*   **Parámetros**: Capital inicial = $2,000 USD | Costo de gas por transacción = $0.35 USD | Competencia en Bins ($L_{bin}$) = $100,000 USD.
+*   **Métricas de las Estrategias Clave**:
+
+| Estrategia / Estimador Vol. | Ret. HODL ($) | Fees ($) | Gas ($) | Deval. Inventario ($) | Valor Final ($) | Rebal. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Manual Fija (Estática 12 Bins)** | $114.75 | $128.45 | $12.60 | -$112.82 | $2,003.03 | 36 |
+| **Dinámica 1-Sigma (Rolling Vol)** | $123.78 | $137.54 | $12.60 | -$95.22 | $2,029.72 | 36 |
+| **Optimizada (Vol. Constante)** | $516.19 | $620.45 | $103.25 | -$489.27 | $2,027.93 | 295 |
+| **Optimizada (Rolling Vol 30m)** | $389.81 | $460.49 | $69.65 | -$367.03 | $2,023.81 | 199 |
+| **Optimizada (GARCH 1,1)** | $350.12 | $413.83 | $62.65 | -$311.50 | $2,039.69 | 179 |
+| **Optimizada (Filtro Heston)** | $159.16 | $179.81 | $19.60 | -$142.88 | $2,017.33 | 56 |
+
+---
+
+### 2. Desglose Numérico de la Campaña de 1 Mes (15-min aggregate)
+
+*   **Parámetros**: Capital inicial = $2,000 USD | Costo de gas por transacción = $0.35 USD | Competencia en Bins ($L_{bin}$) = $100,000 USD.
+*   **Métricas de las Estrategias Clave**:
+
+| Estrategia / Estimador Vol. | Ret. HODL ($) | Fees ($) | Gas ($) | Deval. Inventario ($) | Valor Final ($) | Rebal. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Manual Fija (Estática 12 Bins)** | $666.01 | $721.44 | $50.05 | -$419.73 | $2,251.66 | 143 |
+| **Dinámica 1-Sigma (Rolling Vol)** | $578.47 | $617.72 | $34.30 | -$313.12 | $2,270.30 | 98 |
+| **Optimizada (Vol. Constante)** | $2,255.13 | $2,595.01 | $334.95 | -$1,263.95 | $2,996.11 | 957 |
+| **Optimizada (Rolling Vol 30m)** | $1,907.12 | $2,160.19 | $248.15 | -$1,115.57 | $2,796.47 | 709 |
+| **Optimizada (GARCH 1,1)** | $1,901.47 | $2,144.13 | $237.65 | -$1,083.28 | $2,823.19 | 679 |
+| **Optimizada (Filtro Heston)** | $814.23 | $885.26 | $66.15 | -$468.40 | $2,350.71 | 189 |
+
+---
+
+### 3. Descubrimientos Científicos y Físicos Clave
+
+La extensión temporal a 1 semana y 1 mes ha revelado la verdadera naturaleza del trade-off de liquidez en DeFi, destruyendo algunas intuiciones ingenuas sobre los modelos dinámicos:
+
+#### A. La Paradoja de la Dilución de Rango (Opportunity Cost vs. Gas Savings)
+*   **El Fenómeno**: Los estimadores altamente sofisticados como **Heston** o **GARCH(1,1)** dinámicos son muy eficientes para reducir los rebalanceos (Heston rebalanceó solo 189 veces en un mes en comparación con las 957 de la estrategia Optimizada Constante, ahorrando un **80% de gas**).
+*   **La Trampa**: Para lograr esta reducción de transacciones, el modelo ensancha enormemente el rango de bins ante picos de volatilidad. Sin embargo, al ensanchar el rango, la densidad de liquidez decae de forma cuadrática ($1/W$). Como el volumen de trading real del pool es gigantesco ($533 millones de USD), la comisiones que dejamos de ganar por estar diluidos (costo de oportunidad) es sustancialmente mayor que el ahorro de gas de red.
+*   **La Diferencia Cuantitativa**:
+    *   *Gas Ahorrado por Heston*: $334.95 (Constante) - $66.15 (Heston) = **$268.80 USD**.
+    *   *Fees Perdidos por Dilución de Heston*: $2,595.01 (Constante) - $885.26 (Heston) = **$1,709.75 USD**.
+    *   *Pérdida Neta Real*: Heston destruyó **$1,440.95 USD** en rendimiento en comparación con la concentración constante agresiva.
+
+#### B. Coherencia Absoluta de la Estrategia Optimizada Constante
+*   A lo largo del mes, la estrategia **Optimizada Constante** mantuvo rangos sumamente estrechos calibrados con la volatilidad incondicional (48.02%).
+*   Esta concentración masiva le permitió capturar la asombrosa cantidad de **$2,595.01 USD en comisiones brutas** a partir de un capital de $2,000 USD (un **129.7% de retorno mensual bruto en comisiones**).
+*   A pesar de sufrir devaluación de inventario y pérdida impermanente de **-$1,263.95 USD** (debido a la devaluación física de AVAX en ese mes) y pagar **$334.95 USD** en gas, el valor neto real de la cartera en USD ascendió a **$2,996.11 USD**. Esto equivale a un **+49.8% de retorno neto real absoluto en USD en 30 días** en un mercado bajista moderado.
+
+#### C. El Rol de la Estructura de Gas en Avalanche C-Chain
+*   Dado que el costo de gas en Avalanche C-Chain para ejecutar swaps y retiros de Trader Joe es muy bajo (~$0.35 USD), el costo marginal de transaccionar con alta frecuencia es prácticamente despreciable en comparación con las comisiones ganadas por alta concentración.
+*   *Lección para Producción*: En redes con tarifas de gas económicas (L2s como Arbitrum, Avalanche, Polygon), **la estrategia óptima consiste en concentrar liquidez de forma extrema y rebalancear activamente (high-frequency concentration)**, ignorando el ensanchamiento dinámico preventivo de rangos. Las estrategias dinámicas y ensanchadas de volatilidad estocástica solo cobran sentido en redes extremadamente caras como Ethereum Mainnet (L1).
+
+---

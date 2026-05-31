@@ -72,7 +72,8 @@ class BinLiquidityBacktester:
         vol_window: int = 30,
         pool_bin_tvl: float = 100000.0,
         expected_volume_per_minute: float = 5000.0,
-        fee_model: str = "realistic"
+        fee_model: str = "realistic",
+        dt_step: float = 1.0 / 525600.0
     ) -> Dict[str, Any]:
         """
         Ejecuta el backtest comparativo real de 15 estrategias cuantitativas.
@@ -119,7 +120,7 @@ class BinLiquidityBacktester:
         
         # Volatilidad incondicional estimada (promedio de la serie para los modelos constantes)
         log_returns_full = np.diff(np.log(prices_real))
-        dt_min = 1.0 / 525600.0
+        dt_min = dt_step
         vol_unconditional = np.std(log_returns_full, ddof=1) / np.sqrt(dt_min)
         vol_unconditional = np.clip(vol_unconditional, 0.10, 2.0)
         
