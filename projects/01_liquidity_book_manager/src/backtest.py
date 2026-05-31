@@ -73,7 +73,8 @@ class BinLiquidityBacktester:
         pool_bin_tvl: float = 100000.0,
         expected_volume_per_minute: float = 5000.0,
         fee_model: str = "realistic",
-        dt_step: float = 1.0 / 525600.0
+        dt_step: float = 1.0 / 525600.0,
+        slippage_rate: float = 0.0
     ) -> Dict[str, Any]:
         """
         Ejecuta el backtest comparativo real de 15 estrategias cuantitativas.
@@ -162,7 +163,8 @@ class BinLiquidityBacktester:
                 "il": 0.0,
                 "entry": price_bins[0],
                 "active": True,
-                "capital_assets": capital
+                "capital_assets": capital,
+                "slippage": 0.0
             }
 
         # Historial de ganancias netas acumuladas paso a paso para graficar
@@ -261,7 +263,9 @@ class BinLiquidityBacktester:
                                 il_t = compute_il(st["entry"], price_bin)
                                 current_assets = st["capital_assets"] * (0.5 + 0.5 * (price_usd / entry_usd_local)) * (1.0 - il_t / capital)
                             
-                            st["capital_assets"] = current_assets - gas_fee
+                            slippage_loss = current_assets * slippage_rate
+                            st["slippage"] += slippage_loss
+                            st["capital_assets"] = current_assets - gas_fee - slippage_loss
                             st["gas"] += gas_fee
                             st["rebal"] += 1
                             st["active"] = False
@@ -270,7 +274,9 @@ class BinLiquidityBacktester:
                             # Se calma: re-deposita centrándose
                             st["gas"] += gas_fee
                             st["rebal"] += 1
-                            st["capital_assets"] -= gas_fee
+                            slippage_loss = st["capital_assets"] * slippage_rate
+                            st["slippage"] += slippage_loss
+                            st["capital_assets"] -= (gas_fee + slippage_loss)
                             
                             if "1sig" in k:
                                 w_new = get_sigma_width(vol_est_local, 1.0)
@@ -325,7 +331,9 @@ class BinLiquidityBacktester:
                         st["gas"] += gas_fee
                         st["rebal"] += 1
 
-                        st["capital_assets"] = current_assets - gas_fee
+                        slippage_loss = current_assets * slippage_rate
+                        st["slippage"] += slippage_loss
+                        st["capital_assets"] = current_assets - gas_fee - slippage_loss
 
                         # Determinar nuevo ancho
                         if k == "static":
@@ -349,18 +357,18 @@ class BinLiquidityBacktester:
                     current_assets = st["capital_assets"]
 
                 # Guardar en historial
-                history_path0[k][t] = st["fees"] - st["gas"] - st["il"]
+                history_path0[k][t] = st["fees"] - st["gas"] - st["il"] - st["slippage"]
 
         # 6. Compilar las estadísticas finales
         stats = {}
         for k in keys:
             st = state[k]
-            net_ret = st["fees"] - st["gas"] - st["il"]
+            net_ret = st["fees"] - st["gas"] - st["il"] - st["slippage"]
             
             final_assets = st["capital_assets"]
             absolute_portfolio_value = final_assets + st["fees"]
             absolute_net_profit = absolute_portfolio_value - capital
-            inventory_devaluation = final_assets - capital + st["gas"]
+            inventory_devaluation = final_assets - capital + st["gas"] + st["slippage"]
 
             stats[k] = {
                 "mean_net_return": float(net_ret),
@@ -368,6 +376,7 @@ class BinLiquidityBacktester:
                 "mean_gas_spent": float(st["gas"]),
                 "mean_il_loss": float(st["il"]),
                 "mean_fees_earned": float(st["fees"]),
+                "mean_slippage": float(st["slippage"]),
                 "final_assets": float(final_assets),
                 "absolute_portfolio_value": float(absolute_portfolio_value),
                 "absolute_net_profit": float(absolute_net_profit),
