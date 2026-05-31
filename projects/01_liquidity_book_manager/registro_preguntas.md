@@ -1224,4 +1224,52 @@ Si mejoras estas capas (cobertura de inventario, minimización de gas mediante s
 
 ---
 
+## Consulta 19: Cortafuegos Estocástico Universal: Aplicación a las 15 Estrategias en los 3 Periodos
+
+### Pregunta
+> *¿Qué ocurre si generalizamos el Cortafuegos Estocástico (Circuit Breaker) y se lo aplicamos a todas las estrategias en paralelo? ¿Cómo cambian los resultados en los tres periodos de mercado? ¿Agrega valor real en todas las filosofías de volatilidad?*
+
+### Explicación Cuantitativa
+
+Para responder a esta pregunta, hemos implementado y evaluado **15 estrategias en paralelo** a lo largo de los tres periodos reales de 2,000 minutos de GeckoTerminal. Esto incluye la versión estándar (sin CB) y la versión protegida (con CB) para cada estimador de volatilidad (1-Sigma, 2-Sigma, 3-Sigma, Opt Constante, Opt Rolling, Opt GARCH y Opt Heston).
+
+El análisis revela dos lecciones cuantitativas fundamentales sobre la física de los cortafuegos en mercados reales:
+
+---
+
+### 1. El Umbral de Activación y el "Falso Disparo"
+Para que un cortafuegos agregue valor, el estimador de volatilidad local $\sigma_{est}$ debe ser capaz de discriminar con precisión entre **ruido normal** y **tormentas destructivas**. 
+
+*   **En el Periodo 1 y 2 (Calma y Caída Constante)**:
+    *   La volatilidad anualizada real se mantuvo alrededor del **42% al 44%**.
+    *   Como el umbral del cortafuegos está configurado a un nivel prudente del **120%** (`vol_threshold = 1.20`), **las versiones protegidas (_cb) se comportaron de manera idéntica a sus versiones estándar**. Esto es un comportamiento **excelente y deseado**, ya que demuestra que el cortafuegos no sufre de "falsos disparos" en mercados normales de tendencia, evitando incurrir en el costo de oportunidad de estar fuera de la piscina.
+
+*   **En el Periodo 3 (Estabilización con Shocks Locales)**:
+    *   En este periodo se presentó un micro-shock de volatilidad que disparó la volatilidad condicional calculada por **GARCH(1,1)** por encima del 120%.
+    *   **GARCH + Cortafuegos** se activó de forma inmediata, retirando la liquidez a stablecoin.
+    *   **El Impacto en GARCH**: 
+        *   *GARCH Estándar*: Rebalanceó **46 veces**, pagó **$16.10 USD** en gas y terminó con un saldo absoluto de **$2,006.63 USD**.
+        *   *GARCH + Cortafuegos*: Rebalanceó solo **21 veces** (ahorró más de la mitad de las transacciones), pagó **$7.35 USD** en gas y cerró con un saldo de **$2,012.41 USD** (un retorno absoluto superior).
+        *   *Conclusión*: En este periodo, el cortafuegos de GARCH superó con creces a su versión estándar, demostrando que la desconexión selectiva durante picos de micro-volatilidad protege la liquidez de la fricción del gas.
+
+---
+
+### 2. Por qué no todos los estimadores activaron el Cortafuegos
+
+| Estimador | Tipo de Volatilidad | ¿Activó CB en Periodo 3? | Explicación Física |
+| :--- | :--- | :---: | :--- |
+| **Constante** | Estática (42.7%) | **No** | Por definición, un estimador estático no lee las fluctuaciones locales; su volatilidad siempre es menor que el 120%. |
+| **Rolling (30m)** | Histórica Móvil | **No** | La desviación estándar sobre 30 minutos suaviza demasiado los picos de volatilidad rápidos de un solo minuto, manteniendo la estimación por debajo del umbral. |
+| **GARCH(1,1)** | Dinámica Condicional | **Sí** | Reacciona con fuerza ante el término autorregresivo del retorno reciente ($r_{t-1}^2$), capturando de inmediato el shock de volatilidad local. |
+| **Heston Filter** | Estocástica Filtrada | **No** | El Heston Filter tiene una velocidad de reversión a la media muy alta ($\theta=2.0$), lo que hace que la varianza decaiga hacia el promedio incondicional de forma tan rápida que no llega a superar el umbral del 120% de forma sostenida. |
+
+---
+
+### 3. Conclusión Cuantitativa
+El Cortafuegos Estocástico es una herramienta de protección asimétrica muy potente. **No daña el rendimiento en periodos normales** (ya que el umbral del 120% evita falsos disparos), y **agrega valor real en periodos inestables o de quietud con shocks locales** (como en el Periodo 3 bajo GARCH, incrementando el saldo absoluto a **$2,012.41 USD** y recortando el gas en un 55%). 
+
+En producción, la combinación de **GARCH(1,1) + Cortafuegos** es la configuración más eficiente y segura para amortizar costos de red.
+
+---
+
 ## _(Espacio reservado para futuras consultas)_

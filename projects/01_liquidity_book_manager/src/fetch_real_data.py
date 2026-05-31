@@ -14,8 +14,8 @@ def fetch_real_avax_data():
     base_url = f"https://api.geckoterminal.com/api/v2/networks/{network}/pools/{pool_address}/ohlcv/minute"
     headers = {"Accept": "application/json;version=20230302"}
     
-    # Queremos descargar 4,000 minutos de datos históricos reales (aprox. 2.7 días)
-    total_minutes = 4000
+    # Descargamos 12,000 minutos de datos históricos reales (aprox. 8.3 días)
+    total_minutes = 12000
     all_candles = []
     
     before_timestamp = None
@@ -70,19 +70,17 @@ def fetch_real_avax_data():
     volumes = [float(x[5]) for x in all_candles]
     
     # Calcular la Volatilidad Realizada Real para cada punto
-    # Usaremos una ventana móvil de 30 minutos de log-retornos para estimar la volatilidad anualizada
     log_prices = np.log(prices)
     log_returns = np.diff(log_prices)
     
     # dt para 1 minuto en fracción de año
-    dt = 1.0 / (365.0 * 24.0 * 60.0)
+    dt = 1.0 / 525600.0
     
     vols = np.zeros(len(prices))
     vols[0] = 0.65  # Volatilidad base por defecto (65%)
     
     for t in range(1, len(prices)):
         window = max(0, t - 30)
-        # Necesitamos al menos 5 retornos para una desviación estándar muestral representativa
         if t - window >= 5:
             std_ret = np.std(log_returns[window:t], ddof=1)
             vols[t] = np.clip(std_ret / np.sqrt(dt), 0.10, 2.50)
