@@ -32,11 +32,11 @@ def run_capital_scaling_analysis():
         ("Medida 3: Aporte Asimétrico (Slippage 0.00%)", 0.0000)
     ]
     
-    print("\n" + "=" * 125)
+    print("\n" + "=" * 142)
     print(" CAMPAÑA 1 MES (VELAS 1m): ANÁLISIS DE ESCALABILIDAD DE CAPITAL INICIAL Y ROI NETO ")
-    print("=" * 125)
-    print("  Cap. Inicial ($) | Medida Slippage | Rebal. | Fees ($) | Gas ($) | Slippage ($) | Pool Final ($) | Net ROI (%)")
-    print("-" * 125)
+    print("=" * 142)
+    print("  Cap. Inicial ($) | Medida Slippage | Rebal. | Fees ($) | Gas ($) | Slippage ($) | Pool Final ($) | Val. Final ($) | Net ROI (%)")
+    print("-" * 142)
     
     for cap in capital_sizes:
         for label, slip_rate in mitigation_measures:
@@ -73,9 +73,10 @@ def run_capital_scaling_analysis():
                 f"${stats['mean_gas_spent']:7.2f} | "
                 f"${stats['mean_slippage']:12.2f} | "
                 f"${stats['final_assets']:14.2f} | "
+                f"${stats['absolute_portfolio_value']:14.2f} | "
                 f"{roi:+10.2f}%"
             )
-        print("-" * 125)
+        print("-" * 142)
         
     print("\n Nota: Un ROI de -100.00% indica que el colateral del pool fue absorbido en su totalidad por el gas fijo de $0.35.")
 
