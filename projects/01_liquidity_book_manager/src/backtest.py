@@ -315,14 +315,14 @@ class BinLiquidityBacktester:
                     if st["L"] <= price_bin <= st["U"]:
                         # COMISIONES
                         if fee_model == "realistic":
-                            c_bin = capital / st["w"]
-                            share = c_bin / (pool_bin_tvl + c_bin)
+                            c_bin = max(0.0, st["capital_assets"]) / st["w"]
+                            share = c_bin / (pool_bin_tvl + c_bin) if (pool_bin_tvl + c_bin) > 0 else 0.0
                             fee_earned = volume_real[t] * base_fee_rate * share
                             st["fees"] += fee_earned
                         else:
                             vol_factor = 1.0 + 2.0 * max(0.0, (vol_est_local / 0.65) - 1.0)
                             effective_fee_rate = base_fee_rate * vol_factor
-                            c_bin = capital / st["w"]
+                            c_bin = max(0.0, st["capital_assets"]) / st["w"]
                             st["fees"] += c_bin * effective_fee_rate
                     else:
                         # REBALANCEO

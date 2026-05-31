@@ -1439,21 +1439,26 @@ A continuación se exponen las tablas comparativas ASCII para la semana y el mes
 
 | Estrategia | Configuración de Slippage | Rebal. | Fees ($) | Gas ($) | Slippage ($) | Valor Final Cartera ($) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Estática Fija (12 bins)** | Medida 1: Naive (0.10%) | 60 | $212.11 | $21.00 | $111.92 | **$1,943.77 USD** (Pierde vs HODL) |
-| | Medida 2: Optimizado (0.03%) | 60 | $212.11 | $21.00 | $34.27 | **$2,018.54 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 60 | $212.11 | $21.00 | $0.00 | **$2,051.54 USD** (Rentable) |
-| **Dinámica 1-Sigma** | Medida 1: Naive (0.10%) | 36 | $175.24 | $12.60 | $68.81 | **$1,991.71 USD** (Rentable) |
-| | Medida 2: Optimizado (0.03%) | 36 | $175.24 | $12.60 | $20.89 | **$2,038.26 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 36 | $175.24 | $12.60 | $0.00 | **$2,058.56 USD** (Rentable) |
-| **Optimizada Constante** | Medida 1: Naive (0.10%) | 503 | $1,186.99 | $176.05 | $630.09 | **$1,886.44 USD** (Pierde vs HODL) |
-| | Medida 2: Optimizado (0.03%) | 503 | $1,186.99 | $176.05 | $221.19 | **$2,211.66 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 503 | $1,186.99 | $176.05 | $0.00 | **$2,391.01 USD** (Rentable) |
-| **Optimizada GARCH(1,1)** | Medida 1: Naive (0.10%) | 311 | $761.87 | $108.85 | $461.84 | **$1,821.36 USD** (Pierde vs HODL) |
-| | Medida 2: Optimizado (0.03%) | 311 | $761.87 | $108.85 | $153.31 | **$2,090.75 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 311 | $761.87 | $108.85 | $0.00 | **$2,225.59 USD** (Rentable) |
-| **Optimizada Heston** | Medida 1: Naive (0.10%) | 134 | $404.77 | $46.90 | $233.63 | **$1,900.57 USD** (Pierde vs HODL) |
-| | Medida 2: Optimizado (0.03%) | 134 | $404.77 | $46.90 | $73.32 | **$2,049.93 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 134 | $404.77 | $46.90 | $0.00 | **$2,118.35 USD** (Rentable) |
+| **Estática Fija (12 bins)** | Medida 1: Naive (0.10%) | 60 | $200.21 | $21.00 | $111.92 | **$1,931.87 USD** (Pierde vs HODL) |
+| | Medida 2: Optimizado (0.03%) | 60 | $203.88 | $21.00 | $34.27 | **$2,010.30 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 60 | $205.47 | $21.00 | $0.00 | **$2,044.90 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 60 | $160.35 | $21.00 | $872.60 | **$1,162.54 USD** (Pierde vs HODL) |
+| **Dinámica 1-Sigma** | Medida 1: Naive (0.10%) | 36 | $168.78 | $12.60 | $68.81 | **$1,985.25 USD** (Rentable) |
+| | Medida 2: Optimizado (0.03%) | 36 | $170.64 | $12.60 | $20.89 | **$2,033.66 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 36 | $171.45 | $12.60 | $0.00 | **$2,054.77 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 36 | $147.16 | $12.60 | $591.39 | **$1,456.90 USD** (Pierde vs HODL) |
+| **Optimizada Constante** | Medida 1: Naive (0.10%) | 503 | $809.14 | $176.05 | $630.09 | **$1,508.60 USD** (Pierde vs HODL) |
+| | Medida 2: Optimizado (0.03%) | 503 | $921.46 | $176.05 | $221.19 | **$1,946.14 USD** (Pierde vs HODL) |
+| | Medida 3: Asimétrico (0.00%) | 503 | $976.63 | $176.05 | $0.00 | **$2,180.65 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 503 | $262.39 | $176.05 | $1,718.88 | **$238.53 USD** (Pérdida Crítica) |
+| **Optimizada GARCH(1,1)** | Medida 1: Naive (0.10%) | 311 | $595.64 | $108.85 | $461.84 | **$1,655.13 USD** (Pierde vs HODL) |
+| | Medida 2: Optimizado (0.03%) | 311 | $648.03 | $108.85 | $153.31 | **$1,976.92 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 311 | $672.56 | $108.85 | $0.00 | **$2,136.28 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 311 | $258.60 | $108.85 | $1,719.45 | **$295.70 USD** (Pérdida Crítica) |
+| **Optimizada Heston** | Medida 1: Naive (0.10%) | 134 | $358.57 | $46.90 | $233.63 | **$1,854.37 USD** (Pierde vs HODL) |
+| | Medida 2: Optimizado (0.03%) | 134 | $373.57 | $46.90 | $73.32 | **$2,018.74 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 134 | $380.27 | $46.90 | $0.00 | **$2,093.85 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 134 | $224.10 | $46.90 | $1,393.16 | **$656.60 USD** (Pérdida Crítica) |
 
 ---
 
@@ -1464,21 +1469,26 @@ A continuación se exponen las tablas comparativas ASCII para la semana y el mes
 
 | Estrategia | Configuración de Slippage | Rebal. | Fees ($) | Gas ($) | Slippage ($) | Valor Final Cartera ($) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Estática Fija (12 bins)** | Medida 1: Naive (0.10%) | 210 | $1,123.62 | $73.50 | $347.16 | **$2,420.39 USD** (Rentable) |
-| | Medida 2: Optimizado (0.03%) | 210 | $1,123.62 | $73.50 | $111.70 | **$2,631.07 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 210 | $1,123.62 | $73.50 | $0.00 | **$2,731.31 USD** (Rentable) |
-| **Dinámica 1-Sigma** | Medida 1: Naive (0.10%) | 138 | $873.34 | $48.30 | $243.71 | **$2,360.09 USD** (Rentable) |
-| | Medida 2: Optimizado (0.03%) | 138 | $873.34 | $48.30 | $76.59 | **$2,513.23 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 138 | $873.34 | $48.30 | $0.00 | **$2,583.51 USD** (Rentable) |
-| **Optimizada Constante** | Medida 1: Naive (0.10%) | 2,121 | $6,255.97 | $742.35 | $842.45 | **$6,114.73 USD** (Altamente Rentable) |
-| | Medida 2: Optimizado (0.03%) | 2,121 | $6,255.97 | $742.35 | $409.93 | **$6,200.74 USD** (Altamente Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 2,121 | $6,255.97 | $742.35 | $0.00 | **$6,344.18 USD** (Altamente Rentable) |
-| **Optimizada GARCH(1,1)** | Medida 1: Naive (0.10%) | 1,569 | $4,926.68 | $549.15 | $898.16 | **$4,878.62 USD** (Altamente Rentable) |
-| | Medida 2: Optimizado (0.03%) | 1,569 | $4,926.68 | $549.15 | $401.39 | **$5,076.14 USD** (Altamente Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 1,569 | $4,926.68 | $549.15 | $0.00 | **$5,274.85 USD** (Altamente Rentable) |
-| **Optimizada Heston** | Medida 1: Naive (0.10%) | 272 | $1,343.97 | $95.20 | $422.96 | **$2,489.71 USD** (Rentable) |
-| | Medida 2: Optimizado (0.03%) | 272 | $1,343.97 | $95.20 | $138.83 | **$2,738.84 USD** (Rentable) |
-| | Medida 3: Asimétrico (0.00%) | 272 | $1,343.97 | $95.20 | $0.00 | **$2,861.12 USD** (Rentable) |
+| **Estática Fija (12 bins)** | Medida 1: Naive (0.10%) | 210 | $947.69 | $73.50 | $347.16 | **$2,244.46 USD** (Rentable) |
+| | Medida 2: Optimizado (0.03%) | 210 | $1,009.42 | $73.50 | $111.70 | **$2,516.87 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 210 | $1,037.59 | $73.50 | $0.00 | **$2,645.28 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 210 | $478.91 | $73.50 | $1,636.08 | **$653.21 USD** (Pérdida Crítica) |
+| **Dinámica 1-Sigma** | Medida 1: Naive (0.10%) | 138 | $780.27 | $48.30 | $243.71 | **$2,267.02 USD** (Rentable) |
+| | Medida 2: Optimizado (0.03%) | 138 | $813.60 | $48.30 | $76.59 | **$2,453.49 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 138 | $828.51 | $48.30 | $0.00 | **$2,538.68 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 138 | $485.08 | $48.30 | $1,429.14 | **$898.95 USD** (Pierde vs HODL) |
+| **Optimizada Constante** | Medida 1: Naive (0.10%) | 2,121 | $1,446.36 | $742.35 | $842.45 | **$1,305.13 USD** (Pierde vs HODL) |
+| | Medida 2: Optimizado (0.03%) | 2,121 | $2,189.25 | $742.35 | $409.93 | **$2,134.01 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 2,121 | $2,775.55 | $742.35 | $0.00 | **$2,863.76 USD** (Altamente Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 2,121 | $269.28 | $742.35 | $1,198.12 | **$236.65 USD** (Ruina Financiera) |
+| **Optimizada GARCH(1,1)** | Medida 1: Naive (0.10%) | 1,569 | $1,487.81 | $549.15 | $898.16 | **$1,439.75 USD** (Pierde vs HODL) |
+| | Medida 2: Optimizado (0.03%) | 1,569 | $2,189.43 | $549.15 | $401.39 | **$2,338.89 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 1,569 | $2,650.45 | $549.15 | $0.00 | **$2,998.62 USD** (Altamente Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 1,569 | $271.29 | $549.15 | $1,382.96 | **$238.69 USD** (Ruina Financiera) |
+| **Optimizada Heston** | Medida 1: Naive (0.10%) | 272 | $1,013.88 | $95.20 | $422.96 | **$2,159.63 USD** (Rentable) |
+| | Medida 2: Optimizado (0.03%) | 272 | $1,122.87 | $95.20 | $138.83 | **$2,517.75 USD** (Rentable) |
+| | Medida 3: Asimétrico (0.00%) | 272 | $1,174.07 | $95.20 | $0.00 | **$2,691.22 USD** (Rentable) |
+| | Medida 4: Bot Ineficiente (1.00%) | 272 | $348.16 | $95.20 | $1,701.21 | **$422.07 USD** (Ruina Financiera) |
 
 ---
 
