@@ -233,5 +233,53 @@ def run_backtesting_campaign():
             plt.savefig(output_path, dpi=150)
             print(f"¡Gráfico de rendimiento de las 15 estrategias guardado en: {output_path}!\n")
 
+    # --- 3. RUN CONSOLIDATED CONTINUOUS BACKTEST OVER THE FULL 6,000 MINUTES ---
+    prices_full = df_hist["price"].values
+    vols_full = df_hist["volatility_true"].values
+    volume_full = df_hist["volume_real"].values
+    n_steps_full = len(df_hist) - 1
+    times_full = np.arange(n_steps_full + 1) * dt_min
+    expected_vol_min_full = volume_full.mean()
+    
+    price_change_full = ((prices_full[-1] / prices_full[0]) - 1.0) * 100
+    total_vol_full = volume_full.sum()
+    
+    stats_str_full = (
+        f"Duración Continua: {n_steps_full/1440:.2f} días ({n_steps_full/60:.1f} horas) | "
+        f"Precio: ${prices_full[0]:.2f} -> ${prices_full[-1]:.2f} ({price_change_full:+.2f}%) | "
+        f"Volumen Pool: ${total_vol_full:,.2f} USD (Avg: ${expected_vol_min_full:,.2f}/min)"
+    )
+    
+    print("\n" + "=" * 125)
+    print("                  EJECUTANDO BACKTEST COMPLETO CONSOLIDADO (CONTINUO DE 6,000 MINUTOS)                       ")
+    print("=============================================================================================================")
+    results_full = backtester.run_backtest(
+        prices_real=prices_full,
+        vols_real=vols_full,
+        volume_real=volume_full,
+        times_real=times_full,
+        capital=capital,
+        base_fee_rate=base_fee_rate,
+        gas_fee=gas_fee_real,
+        drift=drift,
+        bin_step_bp=bin_step_bp,
+        static_width=12,
+        horizon_hours=4.0,
+        vol_threshold=1.20,
+        vol_window=30,
+        pool_bin_tvl=pool_bin_tvl,
+        expected_volume_per_minute=expected_vol_min_full,
+        fee_model="realistic"
+    )
+    
+    print_multi_period_table(
+        "TABLA COMPLETA CONSOLIDADA (ACUMULADO TOTAL CONTÍNUO DE 6,000 MINUTOS)",
+        stats_str_full,
+        results_full,
+        capital,
+        base_fee_rate,
+        gas_fee_real
+    )
+
 if __name__ == "__main__":
     run_backtesting_campaign()
